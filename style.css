@@ -1,0 +1,403 @@
+/* === STEEL FURY — Top-Down Tank Shooter CSS === */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap');
+
+:root {
+  --green: #6f6;
+  --green-dim: #3a8a3a;
+  --green-bright: #9f9;
+  --red: #f44;
+  --yellow: #fc0;
+  --bg: #0a0e08;
+  --panel: rgba(8, 18, 6, 0.88);
+  --panel-border: rgba(120, 220, 100, 0.25);
+  --shadow: 0 0 18px rgba(120, 220, 100, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #000;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--green);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+canvas#game {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  display: block;
+}
+
+#hud {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-corner {
+  position: absolute;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(4px);
+}
+
+.hud-corner.tl { top: 12px; left: 12px; min-width: 140px; }
+.hud-corner.tr { top: 12px; right: 12px; min-width: 150px; }
+.hud-corner.bl { bottom: 12px; left: 12px; min-width: 190px; }
+.hud-corner.br { bottom: 12px; right: 12px; min-width: 150px; text-align: right; }
+
+.hud-label {
+  font-size: 9px;
+  color: var(--green-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.hud-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 1px 0;
+  font-size: 12px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.dot.dead { background: #444; box-shadow: none; }
+.dot.hurt { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+.dot.crit { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+#ammo-readout { font-size: 14px; margin: 2px 0; }
+#ammo-type { font-size: 9px; }
+
+#reload-bar-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(120,220,100,0.15);
+  border-radius: 2px;
+  margin: 4px 0 2px;
+  overflow: hidden;
+}
+#reload-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  transition: width 0.1s;
+}
+
+.bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.bar {
+  height: 6px;
+  border-radius: 2px;
+  transition: width 0.25s, background 0.3s;
+}
+.bar.hp { background: var(--green); box-shadow: 0 0 4px var(--green); }
+.bar.engine { background: #fc0; box-shadow: 0 0 4px #fc0; }
+.bar.turret { background: #4af; box-shadow: 0 0 4px #4af; }
+.bar.gun { background: #f80; box-shadow: 0 0 4px #f80; }
+.bar.track { background: #aaa; box-shadow: 0 0 4px #aaa; }
+
+.bar-wrap span { font-size: 9px; min-width: 32px; color: var(--green-dim); }
+
+#score {
+  font-size: 28px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 10px var(--green);
+}
+
+#timer {
+  font-size: 14px;
+  color: var(--green-dim);
+  margin-top: 2px;
+}
+
+#tank-count {
+  font-size: 10px;
+  margin-top: 2px;
+  color: var(--green-dim);
+}
+
+#kill-feed {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.kill-msg {
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(120,220,100,0.3);
+  border-radius: 3px;
+  padding: 4px 8px;
+  font-size: 11px;
+  animation: fadeInKill 0.3s ease-out;
+  white-space: nowrap;
+}
+
+@keyframes fadeInKill {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+#damage-flash {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, transparent 50%, rgba(255,0,0,0.25) 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+#damage-flash.show {
+  opacity: 1;
+}
+
+#minimap {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  background: rgba(0,0,0,0.6);
+  z-index: 11;
+}
+
+#start-screen {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, #0c1a08 0%, #000 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.title-wrap {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title-wrap h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--green);
+  text-shadow: 0 0 30px rgba(120,220,100,0.6), 0 0 60px rgba(120,220,100,0.3);
+  margin-bottom: 8px;
+}
+
+.title-wrap .sub {
+  font-size: 16px;
+  letter-spacing: 8px;
+  color: var(--green-dim);
+  text-transform: uppercase;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  width: 90%;
+  margin-bottom: 40px;
+}
+
+.setup-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.setup-panel h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--green-bright);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.setup-panel p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.setup-panel b { color: var(--green); }
+
+#tank-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tank-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tank-option:hover, .tank-option.selected {
+  background: rgba(120,220,100,0.1);
+  border-color: var(--green);
+}
+
+.tank-option.selected {
+  box-shadow: 0 0 10px rgba(120,220,100,0.3);
+}
+
+.tank-option .icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tank-option .info { flex: 1; }
+.tank-option .info .name {
+  font-size: 13px;
+  color: var(--green-bright);
+}
+.tank-option .info .stats {
+  font-size: 9px;
+  color: var(--green-dim);
+}
+
+.controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: #aaa;
+}
+
+kbd {
+  display: inline-block;
+  background: rgba(120,220,100,0.1);
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 10px;
+  color: var(--green);
+  margin-right: 2px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+#start-btn, #restart-btn {
+  background: linear-gradient(180deg, rgba(120,220,100,0.2) 0%, rgba(120,220,100,0.05) 100%);
+  border: 2px solid var(--green);
+  color: var(--green);
+  padding: 16px 48px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+#start-btn:hover, #restart-btn:hover {
+  background: linear-gradient(180deg, rgba(120,220,100,0.35) 0%, rgba(120,220,100,0.1) 100%);
+  box-shadow: 0 0 30px rgba(120,220,100,0.4);
+  transform: scale(1.02);
+}
+
+#gameover-screen {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, #1a0808 0%, #000 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+}
+
+#gameover-screen h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: var(--red);
+  text-shadow: 0 0 30px rgba(255,0,0,0.5);
+  margin-bottom: 20px;
+}
+
+#go-stats {
+  font-size: 16px;
+  color: #ccc;
+  text-align: center;
+  margin-bottom: 30px;
+  line-height: 2;
+}
+
+@media (max-width: 900px) {
+  .setup-grid { grid-template-columns: 1fr; max-width: 500px; }
+  .title-wrap h1 { font-size: 40px; letter-spacing: 6px; }
+  .hud-corner { font-size: 9px; padding: 4px 6px; }
+  .hud-corner.bl { min-width: 140px; }
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Steel Fury — Top-Down Tank Shooter</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game" width="1280" height="720"></canvas>
+    <div id="hud">
+      <div class="hud-corner tl">
+        <div class="hud-label">CREW</div>
+        <div class="hud-row"><span class="dot" id="dot-driver"></span> Driver</div>
+        <div class="hud-row"><span class="dot" id="dot-gunner"></span> Gunner</div>
+        <div class="hud-row"><span class="dot" id="dot-loader"></span> Loader</div>
+        <div class="hud-row"><span class="dot" id="dot-commander"></span> Commander</div>
+      </div>
+      <div class="hud-corner tr">
+        <div class="hud-label">AMMO</div>
+        <div id="ammo-readout">AP: 24 / 0</div>
+        <div id="ammo-type" class="hud-label">ARMOR-PIERCING</div>
+        <div id="reload-bar-wrap"><div id="reload-bar"></div></div>
+        <div id="gun-state" style="font-size:11px;color:#9f9">READY</div>
+      </div>
+      <div class="hud-corner bl">
+        <div class="hud-label">HULL</div>
+        <div class="bar-wrap"><div id="hull-bar" class="bar hp"></div><span id="hull-txt">100%</span></div>
+        <div class="hud-label">ENGINE</div>
+        <div class="bar-wrap"><div id="engine-bar" class="bar engine"></div><span id="engine-txt">100%</span></div>
+        <div class="hud-label">TURRET</div>
+        <div class="bar-wrap"><div id="turret-bar" class="bar turret"></div><span id="turret-txt">100%</span></div>
+        <div class="hud-label">GUN</div>
+        <div class="bar-wrap"><div id="gun-bar" class="bar gun"></div><span id="gun-txt">100%</span></div>
+        <div class="hud-label">TRACKS</div>
+        <div class="bar-wrap"><div id="track-bar" class="bar track"></div><span id="track-txt">100%</span></div>
+      </div>
+      <div class="hud-corner br">
+        <div class="hud-label">SCORE</div>
+        <div id="score">0</div>
+        <div id="timer">00:00</div>
+        <div id="tank-count">Enemies: 0</div>
+        <div id="repair-status" style="color:#ff0;font-size:10px;display:none">🔧 REPAIRING...</div>
+      </div>
+      <div id="kill-feed"></div>
+      <div id="damage-flash"></div>
+      <canvas id="minimap" width="160" height="160"></canvas>
+    </div>
+
+    <div id="start-screen">
+      <div class="title-wrap">
+        <h1>STEEL FURY</h1>
+        <p class="sub">Top-Down Armored Combat</p>
+      </div>
+      <div class="setup-grid">
+        <div class="setup-panel">
+          <h3>Choose Tank</h3>
+          <div id="tank-select"></div>
+        </div>
+        <div class="setup-panel">
+          <h3>Controls</h3>
+          <div class="controls-list">
+            <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move / Steer</div>
+            <div><kbd>Mouse</kbd> Aim turret</div>
+            <div><kbd>Left Click</kbd> Fire</div>
+            <div><kbd>Q</kbd>/<kbd>E</kbd> Switch ammo (AP / HE)</div>
+            <div><kbd>F</kbd> Repair (hold while stationary)</div>
+            <div><kbd>Space</kbd> Handbrake / pivot</div>
+          </div>
+        </div>
+        <div class="setup-panel">
+          <h3>Part Damage System</h3>
+          <p>Each tank has <b>hit zones</b>: Hull Front, Hull Side, Hull Rear, Turret, Tracks, Engine, Ammo Rack, Crew.</p>
+          <p><b>AP</b> — high pen, low damage. <b>HE</b> — splash damage, crew kills.</p>
+          <p>Penetration depends on range & angle. Non-pen = bounce / ricochet.</p>
+          <p><b style="color:#6f6">Ammo Zones</b> — Restock AP/HE at glowing green zones around the map.</p>
+          <p><b style="color:#ff6">Repair</b> — Hold F while stationary to repair parts. Damaged crew may recover.</p>
+        </div>
+      </div>
+      <button id="start-btn">START BATTLE</button>
+    </div>
+
+    <div id="gameover-screen" style="display:none">
+      <h1>ELIMINATED</h1>
+      <div id="go-stats"></div>
+      <button id="restart-btn">RETURN TO BATTLE</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
