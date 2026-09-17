@@ -2011,7 +2011,7 @@
     const gunState = document.getElementById('gun-state');
     if (player.gunBroken) { gunState.textContent = 'DESTROYED'; gunState.style.color = '#f44'; }
     else if (player.reloading) { gunState.textContent = 'RELOADING...'; gunState.style.color = '#fc0'; }
-    else { gunState.textContent = 'READY'; gunState.style.color = '#9f9'; }
+    else { gunState.textContent = 'READY'; gunState.style.color = '#e8e8ee'; }
     updateBar('hull', player.parts.hull.hp / player.parts.hull.maxHp * 100, 'hp');
     updateBar('engine', player.parts.engine.hp / player.parts.engine.maxHp * 100, 'engine');
     updateBar('turret', player.parts.turret.hp / player.parts.turret.maxHp * 100, 'turret');
