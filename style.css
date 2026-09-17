@@ -1,17 +1,29 @@
-/* === STEEL FURY — Top-Down Tank Shooter CSS === */
+/* === STEEL FURY — Top-Down Tank Shooter CSS ===
+   Theme: gunmetal black panels, brushed-silver bezels, riveted armor plating */
 
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap');
 
 :root {
-  --green: #6f6;
-  --green-dim: #3a8a3a;
-  --green-bright: #9f9;
-  --red: #f44;
-  --yellow: #fc0;
-  --bg: #0a0e08;
-  --panel: rgba(8, 18, 6, 0.88);
-  --panel-border: rgba(120, 220, 100, 0.25);
-  --shadow: 0 0 18px rgba(120, 220, 100, 0.18);
+  /* status/function colors — kept for readability, muted to fit the metal theme */
+  --green: #cfd6da;
+  --green-dim: #7a8288;
+  --green-bright: #f2f5f7;
+  --red: #ff4d4d;
+  --yellow: #ffc93c;
+
+  /* metal palette */
+  --black: #060607;
+  --gun: #0d0f11;
+  --panel: linear-gradient(180deg, #17191c 0%, #0c0d0f 60%, #08090a 100%);
+  --steel-1: #eef1f3;   /* brightest highlight */
+  --steel-2: #b9bfc4;   /* mid silver */
+  --steel-3: #6d7378;   /* shadowed steel */
+  --steel-4: #34373a;   /* deep recess */
+  --rivet: #4a4e52;
+
+  --bezel-light: rgba(255,255,255,0.35);
+  --bezel-dark: rgba(0,0,0,0.85);
+  --shadow: 0 4px 14px rgba(0,0,0,0.75), 0 0 0 1px #050506;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +44,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: var(--bg);
+  background: var(--black);
 }
 
 canvas#game {
@@ -53,26 +65,46 @@ canvas#game {
   z-index: 10;
 }
 
+/* ===== Bezeled armor-plate panel ===== */
 .hud-corner {
   position: absolute;
   background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: 4px;
-  padding: 8px 12px;
+  border: 1px solid var(--steel-4);
+  border-radius: 3px;
+  padding: 10px 14px;
   font-size: 11px;
   letter-spacing: 0.5px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(4px);
+  box-shadow:
+    inset 0 1px 0 var(--bezel-light),
+    inset 0 -2px 0 var(--bezel-dark),
+    inset 1px 0 0 rgba(255,255,255,0.08),
+    inset -1px 0 0 rgba(0,0,0,0.6),
+    var(--shadow);
 }
+
+/* corner rivets, purely decorative */
+.hud-corner::before,
+.hud-corner::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--steel-1), var(--steel-3) 60%, #000 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.8);
+  top: 4px;
+}
+.hud-corner::before { left: 4px; }
+.hud-corner::after { right: 4px; }
 
 .hud-corner.tl { top: 12px; left: 12px; min-width: 140px; }
 .hud-corner.tr { top: 12px; right: 12px; min-width: 150px; }
 .hud-corner.bl { bottom: 12px; left: 12px; min-width: 190px; }
-.hud-corner.br { bottom: 12px; right: 12px; min-width: 150px; text-align: right; }
+.hud-corner.br { bottom: 190px; right: 12px; min-width: 150px; text-align: right; }
 
 .hud-label {
   font-size: 9px;
-  color: var(--green-dim);
+  color: var(--steel-3);
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 2px;
@@ -84,36 +116,38 @@ canvas#game {
   gap: 6px;
   margin: 1px 0;
   font-size: 12px;
+  color: var(--steel-2);
 }
 
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 6px var(--green);
+  background: radial-gradient(circle at 35% 35%, var(--steel-1), var(--steel-2) 55%, var(--steel-4) 100%);
+  box-shadow: 0 0 4px rgba(230,235,240,0.5), inset 0 0 1px rgba(0,0,0,0.6);
   transition: background 0.3s, box-shadow 0.3s;
 }
-.dot.dead { background: #444; box-shadow: none; }
-.dot.hurt { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-.dot.crit { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.dot.dead { background: #2a2c2e; box-shadow: inset 0 0 2px #000; }
+.dot.hurt { background: radial-gradient(circle at 35% 35%, #ffe08a, var(--yellow) 60%, #8a5e00 100%); box-shadow: 0 0 6px var(--yellow); }
+.dot.crit { background: radial-gradient(circle at 35% 35%, #ff9a9a, var(--red) 60%, #7a0000 100%); box-shadow: 0 0 6px var(--red); }
 
-#ammo-readout { font-size: 14px; margin: 2px 0; }
+#ammo-readout { font-size: 14px; margin: 2px 0; color: var(--steel-1); font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
 #ammo-type { font-size: 9px; }
 
 #reload-bar-wrap {
   width: 100%;
-  height: 4px;
-  background: rgba(120,220,100,0.15);
+  height: 5px;
+  background: var(--steel-4);
   border-radius: 2px;
   margin: 4px 0 2px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.9), inset 0 -1px 0 rgba(255,255,255,0.05);
 }
 #reload-bar {
   height: 100%;
   width: 100%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
+  background: linear-gradient(90deg, var(--steel-3), var(--steel-1));
+  box-shadow: 0 0 6px rgba(230,235,240,0.6);
   transition: width 0.1s;
 }
 
@@ -128,32 +162,34 @@ canvas#game {
   height: 6px;
   border-radius: 2px;
   transition: width 0.25s, background 0.3s;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.6);
 }
-.bar.hp { background: var(--green); box-shadow: 0 0 4px var(--green); }
-.bar.engine { background: #fc0; box-shadow: 0 0 4px #fc0; }
-.bar.turret { background: #4af; box-shadow: 0 0 4px #4af; }
-.bar.gun { background: #f80; box-shadow: 0 0 4px #f80; }
-.bar.track { background: #aaa; box-shadow: 0 0 4px #aaa; }
+.bar.hp     { background: linear-gradient(90deg, var(--steel-3), var(--steel-1)); box-shadow: 0 0 4px rgba(230,235,240,0.5); }
+.bar.engine { background: linear-gradient(90deg, #8a6a1a, var(--yellow)); box-shadow: 0 0 4px rgba(255,201,60,0.5); }
+.bar.turret { background: linear-gradient(90deg, #3a6a8a, #7fd0ff); box-shadow: 0 0 4px rgba(127,208,255,0.5); }
+.bar.gun    { background: linear-gradient(90deg, #8a4a1a, #ff9a4a); box-shadow: 0 0 4px rgba(255,154,74,0.5); }
+.bar.track  { background: linear-gradient(90deg, var(--steel-4), var(--steel-2)); box-shadow: 0 0 3px rgba(185,191,196,0.4); }
 
-.bar-wrap span { font-size: 9px; min-width: 32px; color: var(--green-dim); }
+.bar-wrap span { font-size: 9px; min-width: 32px; color: var(--steel-3); }
 
 #score {
   font-size: 28px;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  text-shadow: 0 0 10px var(--green);
+  color: var(--steel-1);
+  text-shadow: 0 0 10px rgba(230,235,240,0.5), 0 2px 0 #000;
 }
 
 #timer {
   font-size: 14px;
-  color: var(--green-dim);
+  color: var(--steel-3);
   margin-top: 2px;
 }
 
 #tank-count {
   font-size: 10px;
   margin-top: 2px;
-  color: var(--green-dim);
+  color: var(--steel-3);
 }
 
 #kill-feed {
@@ -168,13 +204,15 @@ canvas#game {
 }
 
 .kill-msg {
-  background: rgba(0,0,0,0.7);
-  border: 1px solid rgba(120,220,100,0.3);
+  background: linear-gradient(180deg, #1a1c1e, #0a0a0b);
+  border: 1px solid var(--steel-4);
   border-radius: 3px;
   padding: 4px 8px;
   font-size: 11px;
+  color: var(--steel-2);
   animation: fadeInKill 0.3s ease-out;
   white-space: nowrap;
+  box-shadow: inset 0 1px 0 var(--bezel-light), var(--shadow);
 }
 
 @keyframes fadeInKill {
@@ -201,19 +239,25 @@ canvas#game {
   position: absolute;
   bottom: 12px;
   right: 12px;
-  border: 1px solid var(--panel-border);
-  border-radius: 4px;
-  box-shadow: var(--shadow);
-  background: rgba(0,0,0,0.6);
+  border: 2px solid var(--steel-3);
+  border-radius: 3px;
+  box-shadow:
+    inset 0 1px 0 var(--bezel-light),
+    inset 0 -2px 0 var(--bezel-dark),
+    var(--shadow);
+  background: #000;
   z-index: 11;
 }
 
+/* ===== Start / setup screen ===== */
 #start-screen {
   position: absolute;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at center, #0c1a08 0%, #000 80%);
+  background:
+    radial-gradient(ellipse at center, #141517 0%, #000 78%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -231,15 +275,19 @@ canvas#game {
   font-size: 72px;
   font-weight: 900;
   letter-spacing: 12px;
-  color: var(--green);
-  text-shadow: 0 0 30px rgba(120,220,100,0.6), 0 0 60px rgba(120,220,100,0.3);
+  background: linear-gradient(180deg, #ffffff 0%, #c7ccd0 35%, #8a9094 55%, #d8dcdf 60%, #6a6f73 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 1px rgba(0,0,0,0.9);
+  filter: drop-shadow(0 0 18px rgba(200,205,210,0.35));
   margin-bottom: 8px;
 }
 
 .title-wrap .sub {
   font-size: 16px;
   letter-spacing: 8px;
-  color: var(--green-dim);
+  color: var(--steel-3);
   text-transform: uppercase;
 }
 
@@ -254,30 +302,51 @@ canvas#game {
 
 .setup-panel {
   background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: 8px;
+  border: 1px solid var(--steel-4);
+  border-radius: 6px;
   padding: 20px;
-  box-shadow: var(--shadow);
+  box-shadow:
+    inset 0 1px 0 var(--bezel-light),
+    inset 0 -2px 0 var(--bezel-dark),
+    inset 1px 0 0 rgba(255,255,255,0.06),
+    inset -1px 0 0 rgba(0,0,0,0.6),
+    var(--shadow);
+  position: relative;
 }
+
+.setup-panel::before,
+.setup-panel::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--steel-1), var(--steel-3) 60%, #000 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.8);
+  top: 8px;
+}
+.setup-panel::before { left: 8px; }
+.setup-panel::after { right: 8px; }
 
 .setup-panel h3 {
   font-family: 'Orbitron', sans-serif;
   font-size: 14px;
   letter-spacing: 3px;
-  color: var(--green-bright);
+  color: var(--steel-1);
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--panel-border);
+  border-bottom: 1px solid var(--steel-4);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .setup-panel p {
   font-size: 11px;
   line-height: 1.6;
-  color: #aaa;
+  color: #9aa0a4;
   margin-bottom: 8px;
 }
 
-.setup-panel b { color: var(--green); }
+.setup-panel b { color: var(--steel-1); }
 
 #tank-select {
   display: flex;
@@ -290,19 +359,23 @@ canvas#game {
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  border: 1px solid var(--panel-border);
+  background: linear-gradient(180deg, #16181a, #0a0b0c);
+  border: 1px solid var(--steel-4);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-.tank-option:hover, .tank-option.selected {
-  background: rgba(120,220,100,0.1);
-  border-color: var(--green);
+.tank-option:hover {
+  background: linear-gradient(180deg, #1c1f22, #0c0d0e);
+  border-color: var(--steel-2);
 }
 
 .tank-option.selected {
-  box-shadow: 0 0 10px rgba(120,220,100,0.3);
+  border-color: var(--steel-1);
+  background: linear-gradient(180deg, #23262a, #0c0d0e);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 0 12px rgba(200,205,210,0.25);
 }
 
 .tank-option .icon {
@@ -316,11 +389,11 @@ canvas#game {
 .tank-option .info { flex: 1; }
 .tank-option .info .name {
   font-size: 13px;
-  color: var(--green-bright);
+  color: var(--steel-1);
 }
 .tank-option .info .stats {
   font-size: 9px;
-  color: var(--green-dim);
+  color: var(--steel-3);
 }
 
 .controls-list {
@@ -328,40 +401,55 @@ canvas#game {
   flex-direction: column;
   gap: 6px;
   font-size: 11px;
-  color: #aaa;
+  color: #9aa0a4;
 }
 
 kbd {
   display: inline-block;
-  background: rgba(120,220,100,0.1);
-  border: 1px solid var(--panel-border);
+  background: linear-gradient(180deg, #2a2d30, #131416);
+  border: 1px solid var(--steel-3);
   border-radius: 3px;
   padding: 2px 6px;
   font-size: 10px;
-  color: var(--green);
+  color: var(--steel-1);
   margin-right: 2px;
   font-family: 'Share Tech Mono', monospace;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 0 rgba(0,0,0,0.8);
 }
 
 #start-btn, #restart-btn {
-  background: linear-gradient(180deg, rgba(120,220,100,0.2) 0%, rgba(120,220,100,0.05) 100%);
-  border: 2px solid var(--green);
-  color: var(--green);
+  background: linear-gradient(180deg, #3a3d40 0%, #1a1c1e 45%, #0a0a0b 100%);
+  border: 2px solid var(--steel-2);
+  color: var(--steel-1);
   padding: 16px 48px;
   font-family: 'Orbitron', sans-serif;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 4px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 5px;
   transition: all 0.3s;
   text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 var(--bezel-light),
+    inset 0 -2px 0 var(--bezel-dark),
+    var(--shadow);
 }
 
 #start-btn:hover, #restart-btn:hover {
-  background: linear-gradient(180deg, rgba(120,220,100,0.35) 0%, rgba(120,220,100,0.1) 100%);
-  box-shadow: 0 0 30px rgba(120,220,100,0.4);
+  background: linear-gradient(180deg, #4a4e52 0%, #202225 45%, #0a0a0b 100%);
+  border-color: var(--steel-1);
+  box-shadow:
+    inset 0 1px 0 var(--bezel-light),
+    inset 0 -2px 0 var(--bezel-dark),
+    0 0 26px rgba(210,215,220,0.35),
+    var(--shadow);
   transform: scale(1.02);
+}
+
+#start-btn:active, #restart-btn:active {
+  transform: scale(0.99);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
 }
 
 #gameover-screen {
@@ -369,7 +457,9 @@ kbd {
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at center, #1a0808 0%, #000 80%);
+  background:
+    radial-gradient(ellipse at center, #1a1112 0%, #000 80%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -383,13 +473,13 @@ kbd {
   font-weight: 900;
   letter-spacing: 10px;
   color: var(--red);
-  text-shadow: 0 0 30px rgba(255,0,0,0.5);
+  text-shadow: 0 0 30px rgba(255,20,20,0.5), 0 2px 1px rgba(0,0,0,0.9);
   margin-bottom: 20px;
 }
 
 #go-stats {
   font-size: 16px;
-  color: #ccc;
+  color: var(--steel-2);
   text-align: center;
   margin-bottom: 30px;
   line-height: 2;
