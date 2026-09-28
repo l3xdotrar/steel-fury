@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Steel Fury — Top-Down Tank Shooter</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game" width="1280" height="720"></canvas>
+    <div id="scanlines"></div>
+    <div id="hud">
+      <div class="hud-corner tl">
+        <div class="hud-label">CREW</div>
+        <div class="hud-row"><span class="dot" id="dot-driver"></span> Driver</div>
+        <div class="hud-row"><span class="dot" id="dot-gunner"></span> Gunner</div>
+        <div class="hud-row"><span class="dot" id="dot-loader"></span> Loader</div>
+        <div class="hud-row"><span class="dot" id="dot-commander"></span> Commander</div>
+      </div>
+      <div class="hud-corner tr">
+        <div class="hud-label">AMMO</div>
+        <div id="ammo-readout">AP: 24 / 0</div>
+        <div id="ammo-type" class="hud-label">ARMOR-PIERCING</div>
+        <div id="reload-bar-wrap"><div id="reload-bar"></div></div>
+        <div id="gun-state" style="font-size:11px;color:#e8e8ee">READY</div>
+      </div>
+      <div class="hud-corner bl">
+        <div class="hud-label">HULL</div>
+        <div class="bar-wrap"><div id="hull-bar" class="bar hp"></div><span id="hull-txt">100%</span></div>
+        <div class="hud-label">ENGINE</div>
+        <div class="bar-wrap"><div id="engine-bar" class="bar engine"></div><span id="engine-txt">100%</span></div>
+        <div class="hud-label">TURRET</div>
+        <div class="bar-wrap"><div id="turret-bar" class="bar turret"></div><span id="turret-txt">100%</span></div>
+        <div class="hud-label">GUN</div>
+        <div class="bar-wrap"><div id="gun-bar" class="bar gun"></div><span id="gun-txt">100%</span></div>
+        <div class="hud-label">TRACKS</div>
+        <div class="bar-wrap"><div id="track-bar" class="bar track"></div><span id="track-txt">100%</span></div>
+      </div>
+      <div class="hud-corner br">
+        <div class="hud-label">SCORE</div>
+        <div id="score">0</div>
+        <div id="timer">00:00</div>
+        <div id="tank-count">Enemies: 0</div>
+        <div id="repair-status" style="color:#ff0;font-size:10px;display:none">🔧 REPAIRING...</div>
+      </div>
+      <div class="hud-corner tc" id="mp-scoreboard" style="display:none">
+        <div class="hud-label">PLAYERS</div>
+        <div id="mp-scoreboard-rows"></div>
+        <button id="mp-match-btn" class="ghost-btn small">LEAVE MATCH</button>
+      </div>
+      <div id="kill-feed"></div>
+      <div id="damage-flash"></div>
+      <canvas id="minimap" width="160" height="160"></canvas>
+      <div id="respawn-overlay" style="display:none">
+        <div class="respawn-box">
+          <div class="respawn-title">TANK DESTROYED</div>
+          <div id="respawn-timer">Respawning in 5.0s</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mode-select-screen">
+      <div class="title-wrap">
+        <h1>STEEL FURY</h1>
+        <p class="sub">Top-Down Armored Combat</p>
+      </div>
+      <div class="mode-grid">
+        <div class="mode-option" id="mode-singleplayer">
+          <div class="mode-icon">
+            <svg width="40" height="40" viewBox="0 0 28 28">
+              <rect x="6" y="10" width="16" height="8" rx="1" fill="#9aa0a4" stroke="#eef1f3" stroke-width="1"/>
+              <rect x="14" y="11" width="8" height="3" fill="#3a3a1a"/>
+              <circle cx="14" cy="14" r="4" fill="#9aa0a4" stroke="#eef1f3" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3>SINGLEPLAYER</h3>
+          <p>Fight escalating waves of AI armor solo. Choose your tank and hold the line.</p>
+        </div>
+        <div class="mode-option" id="mode-multiplayer">
+          <div class="mode-icon">
+            <svg width="40" height="40" viewBox="0 0 28 28">
+              <rect x="2" y="12" width="12" height="7" rx="1" fill="#7fd0ff" stroke="#eef1f3" stroke-width="1"/>
+              <circle cx="8" cy="15.5" r="3" fill="#7fd0ff" stroke="#eef1f3" stroke-width="1"/>
+              <rect x="14" y="9" width="12" height="7" rx="1" fill="#ff9a4a" stroke="#eef1f3" stroke-width="1"/>
+              <circle cx="20" cy="12.5" r="3" fill="#ff9a4a" stroke="#eef1f3" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3>MULTIPLAYER</h3>
+          <p>Create or join a lobby and face off against other players directly, peer-to-peer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="start-screen" style="display:none">
+      <button id="sp-back-btn" class="back-btn">&larr; BACK</button>
+      <div class="title-wrap">
+        <h1>STEEL FURY</h1>
+        <p class="sub">Singleplayer — Top-Down Armored Combat</p>
+      </div>
+      <div class="setup-grid">
+        <div class="setup-panel">
+          <h3>Choose Tank</h3>
+          <div id="tank-select"></div>
+        </div>
+        <div class="setup-panel">
+          <h3>Controls</h3>
+          <div class="controls-list">
+            <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move / Steer</div>
+            <div><kbd>Mouse</kbd> Aim turret</div>
+            <div><kbd>Left Click</kbd> Fire</div>
+            <div><kbd>Q</kbd>/<kbd>E</kbd> Switch ammo (AP / HE)</div>
+            <div><kbd>F</kbd> Repair (hold while stationary)</div>
+            <div><kbd>Space</kbd> Handbrake / pivot</div>
+          </div>
+        </div>
+        <div class="setup-panel">
+          <h3>Part Damage System</h3>
+          <p>Each tank has <b>hit zones</b>: Hull Front, Hull Side, Hull Rear, Turret, Tracks, Engine, Ammo Rack, Crew.</p>
+          <p><b>AP</b> — high pen, low damage. <b>HE</b> — splash damage, crew kills.</p>
+          <p>Penetration depends on range & angle. Non-pen = bounce / ricochet.</p>
+          <p><b style="color:#6f6">Ammo Zones</b> — Restock AP/HE at glowing green zones around the map.</p>
+          <p><b style="color:#ff6">Repair</b> — Hold F while stationary to repair parts. Damaged crew may recover.</p>
+        </div>
+      </div>
+      <button id="start-btn">START BATTLE</button>
+    </div>
+
+    <div id="multiplayer-screen" style="display:none">
+      <button id="mp-back-btn" class="back-btn">&larr; BACK</button>
+      <div class="title-wrap">
+        <h1>MULTIPLAYER</h1>
+        <p class="sub" id="mp-status-sub">Connecting to the network…</p>
+      </div>
+      <div class="setup-grid mp-grid">
+        <div class="setup-panel">
+          <h3>Callsign &amp; Tank</h3>
+          <input type="text" id="mp-name-input" class="mp-input" maxlength="20" placeholder="Callsign" />
+          <div id="mp-tank-select" class="mp-tank-select"></div>
+        </div>
+        <div class="setup-panel">
+          <h3>Create Lobby</h3>
+          <input type="text" id="mp-lobby-name-input" class="mp-input" maxlength="40" placeholder="Lobby name" />
+          <button id="mp-create-btn" class="ghost-btn wide" disabled>CREATE PUBLIC LOBBY</button>
+          <p style="margin-top:10px">All lobbies are public — anyone browsing can see and join yours.</p>
+        </div>
+        <div class="setup-panel">
+          <h3>Public Lobbies <button id="mp-refresh-btn" class="mp-refresh-btn" title="Refresh list">&#8635;</button></h3>
+          <div id="mp-lobby-list" class="mp-lobby-list">
+            <div class="mp-empty">Searching for lobbies…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="lobby-screen" style="display:none">
+      <div class="title-wrap">
+        <h1 id="lobby-title">LOBBY</h1>
+        <p class="sub" id="lobby-sub">Waiting for players…</p>
+      </div>
+      <div class="setup-panel lobby-roster-panel">
+        <h3>Players</h3>
+        <div id="lobby-roster"></div>
+      </div>
+      <div class="lobby-actions">
+        <button id="lobby-start-btn" style="display:none">START MATCH</button>
+        <button id="lobby-leave-btn" class="ghost-btn wide">LEAVE LOBBY</button>
+      </div>
+    </div>
+
+    <div id="gameover-screen" style="display:none">
+      <h1>ELIMINATED</h1>
+      <div id="go-stats"></div>
+      <button id="restart-btn">RETURN TO BATTLE</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="net.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
